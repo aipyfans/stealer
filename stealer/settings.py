@@ -245,6 +245,7 @@ USE_TZ = True
 # Add for vuejs
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "appfront/dist/static"),
+    os.path.join(BASE_DIR, "videos"),
 ]
 
 STATIC_URL = '/static/'

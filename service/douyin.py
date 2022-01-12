@@ -111,7 +111,7 @@ class DouyinService(Service):
 
     @classmethod
     def download(cls, url) -> HttpResponse:
-        return cls.proxy_download(vtype, url, download_headers)
+        return cls.proxy_download_url(vtype, url, download_headers)
 
 
 if __name__ == '__main__':

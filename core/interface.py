@@ -94,6 +94,43 @@ class Service:
         file, filename = store.find(vtype, index)
         return Service.stream(file, filename)
 
+    @classmethod
+    def proxy_download_url(cls, vtype, url, header: dict, mode=1) -> HttpResponse:
+        # 检查文件
+        base_url = vtype.value + "/"
+        print(base_url)
+        
+        index = cls.index(url)
+        file, filename = store.find(vtype, index)
+        if file is not None:
+            data = json.dumps({'name': filename, 'url': base_url + filename})
+            print(data)
+            return HttpResponse(data)
+
+        result = cls.fetch(url, mode=mode)
+        if not result.is_success():
+            return HttpResponseServerError(result.get_data())
+
+        if mode == 1:
+            header = header.copy()
+            header['referer'] = result.ref
+
+        if result.is_image():
+            res = store.save_image(vtype, result.get_data(), index)
+            if res is not None:
+                return res
+        else:
+            res = http_utils.get(url=result.get_data(), header=header)
+            if http_utils.is_error(res):
+                return HttpResponseServerError(str(res))
+
+            store.save(vtype, res, index)
+            res.close()
+
+        file, filename = store.find(vtype, index)
+        data = json.dumps({'name': filename, 'url': base_url + filename})
+        return HttpResponse(data)
+
     @staticmethod
     def stream(file, filename) -> HttpResponse:
         try:

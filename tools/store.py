@@ -12,7 +12,7 @@ from core.type import Video
 
 
 logger = logging.getLogger(__name__)
-base_path = os.getcwd() + "/video/"
+base_path = os.getcwd() + "/videos/"
 
 
 def find(vtype: Video, index: str) -> (io.open, str):
